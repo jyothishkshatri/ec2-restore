@@ -1,0 +1,195 @@
+{
+  "InstanceId": "i-0b72a69b2bc4cf4ff",
+  "InstanceName": "TERRAFORM",
+  "InstanceDetails": {
+    "Architecture": "x86_64",
+    "BlockDeviceMappings": [
+      {
+        "DeviceName": "/dev/sda1",
+        "Ebs": {
+          "AttachTime": "2025-03-30 03:59:34+00:00",
+          "DeleteOnTermination": false,
+          "Status": "attached",
+          "VolumeId": "vol-0076faa87d1d524a0"
+        }
+      },
+      {
+        "DeviceName": "/dev/sdf",
+        "Ebs": {
+          "AttachTime": "2025-03-30 03:59:41+00:00",
+          "DeleteOnTermination": false,
+          "Status": "attached",
+          "VolumeId": "vol-0c317db648aaa452d"
+        }
+      }
+    ],
+    "ClientToken": "659d90d2-9376-45e0-8775-a87d754799fb",
+    "EbsOptimized": false,
+    "EnaSupport": true,
+    "Hypervisor": "xen",
+    "IamInstanceProfile": {
+      "Arn": "arn:aws:iam::565393072364:instance-profile/ssm-profile",
+      "Id": "AIPAYHJANUDWDC3EQHQU7"
+    },
+    "NetworkInterfaces": [
+      {
+        "Attachment": {
+          "AttachTime": "2025-03-30 03:35:08+00:00",
+          "AttachmentId": "eni-attach-01b913353b977b2fe",
+          "DeleteOnTermination": false,
+          "DeviceIndex": 0,
+          "Status": "attached",
+          "NetworkCardIndex": 0
+        },
+        "Description": "",
+        "Groups": [
+          {
+            "GroupId": "sg-0d555a33daa51b2b6",
+            "GroupName": "instance-sg"
+          }
+        ],
+        "Ipv6Addresses": [],
+        "MacAddress": "0e:db:e1:9f:22:e3",
+        "NetworkInterfaceId": "eni-0a199470cde27d15c",
+        "OwnerId": "565393072364",
+        "PrivateDnsName": "ip-10-0-1-205.ec2.internal",
+        "PrivateIpAddress": "10.0.1.205",
+        "PrivateIpAddresses": [
+          {
+            "Primary": true,
+            "PrivateDnsName": "ip-10-0-1-205.ec2.internal",
+            "PrivateIpAddress": "10.0.1.205"
+          }
+        ],
+        "SourceDestCheck": true,
+        "Status": "in-use",
+        "SubnetId": "subnet-0fcd7a7dcbee43a95",
+        "VpcId": "vpc-002914bc633a27f48",
+        "InterfaceType": "interface",
+        "Operator": {
+          "Managed": false
+        }
+      }
+    ],
+    "RootDeviceName": "/dev/sda1",
+    "RootDeviceType": "ebs",
+    "SecurityGroups": [
+      {
+        "GroupId": "sg-0d555a33daa51b2b6",
+        "GroupName": "instance-sg"
+      }
+    ],
+    "SourceDestCheck": true,
+    "Tags": [
+      {
+        "Key": "Priority",
+        "Value": "High"
+      },
+      {
+        "Key": "Backup",
+        "Value": "Yes"
+      },
+      {
+        "Key": "ManagedBy",
+        "Value": "Terraform"
+      },
+      {
+        "Key": "Environment",
+        "Value": "Test"
+      },
+      {
+        "Key": "CostCenter",
+        "Value": "IT"
+      },
+      {
+        "Key": "Department",
+        "Value": "Engineering"
+      },
+      {
+        "Key": "Name",
+        "Value": "TERRAFORM"
+      },
+      {
+        "Key": "Application",
+        "Value": "WebApp"
+      },
+      {
+        "Key": "Owner",
+        "Value": "DevOps"
+      },
+      {
+        "Key": "Service",
+        "Value": "Backend"
+      },
+      {
+        "Key": "Project",
+        "Value": "TerraformDemo"
+      }
+    ],
+    "VirtualizationType": "hvm",
+    "CpuOptions": {
+      "CoreCount": 1,
+      "ThreadsPerCore": 1
+    },
+    "CapacityReservationSpecification": {
+      "CapacityReservationPreference": "open"
+    },
+    "HibernationOptions": {
+      "Configured": false
+    },
+    "MetadataOptions": {
+      "State": "applied",
+      "HttpTokens": "optional",
+      "HttpPutResponseHopLimit": 1,
+      "HttpEndpoint": "enabled",
+      "HttpProtocolIpv6": "disabled",
+      "InstanceMetadataTags": "disabled"
+    },
+    "EnclaveOptions": {
+      "Enabled": false
+    },
+    "PlatformDetails": "Linux/UNIX",
+    "UsageOperation": "RunInstances",
+    "UsageOperationUpdateTime": "2025-03-30 03:35:08+00:00",
+    "PrivateDnsNameOptions": {
+      "HostnameType": "ip-name",
+      "EnableResourceNameDnsARecord": false,
+      "EnableResourceNameDnsAAAARecord": false
+    },
+    "MaintenanceOptions": {
+      "AutoRecovery": "default"
+    },
+    "CurrentInstanceBootMode": "legacy-bios",
+    "NetworkPerformanceOptions": {
+      "BandwidthWeighting": "default"
+    },
+    "Operator": {
+      "Managed": false
+    },
+    "InstanceId": "i-0b72a69b2bc4cf4ff",
+    "ImageId": "ami-0d13edc5ba068a1fc",
+    "State": {
+      "Code": 16,
+      "Name": "running"
+    },
+    "PrivateDnsName": "ip-10-0-1-205.ec2.internal",
+    "PublicDnsName": "",
+    "StateTransitionReason": "",
+    "KeyName": "aws",
+    "AmiLaunchIndex": 0,
+    "ProductCodes": [],
+    "InstanceType": "t2.micro",
+    "LaunchTime": "2025-03-30 03:59:41+00:00",
+    "Placement": {
+      "GroupName": "",
+      "Tenancy": "default",
+      "AvailabilityZone": "us-east-1a"
+    },
+    "Monitoring": {
+      "State": "disabled"
+    },
+    "SubnetId": "subnet-0fcd7a7dcbee43a95",
+    "VpcId": "vpc-002914bc633a27f48",
+    "PrivateIpAddress": "10.0.1.205"
+  }
+}

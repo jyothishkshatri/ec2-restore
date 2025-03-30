@@ -1,0 +1,259 @@
+2025-03-29 22:33:35,568 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 22:33:35,575 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 22:33:35,631 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 22:33:35,631 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-01553592e5f14dad3
+2025-03-29 22:33:39,153 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0d13edc5ba068a1fc
+2025-03-29 22:33:42,299 - ec2_restore.modules.cli - INFO - Selected restore type: full
+2025-03-29 22:33:43,978 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-01553592e5f14dad3_20250329_223343.json
+2025-03-29 22:33:44,167 - ec2_restore.modules.restore_manager - INFO - Modifying network interface eni-0a199470cde27d15c to persist after termination
+2025-03-29 22:33:44,574 - ec2_restore.modules.aws_client - INFO - Modified network interface eni-0a199470cde27d15c delete on termination to False
+2025-03-29 22:33:44,575 - ec2_restore.modules.restore_manager - INFO - Stopping existing instance...
+2025-03-29 22:34:26,316 - ec2_restore.modules.restore_manager - INFO - Terminating existing instance...
+2025-03-29 22:34:26,670 - ec2_restore.modules.restore_manager - INFO - Waiting for instance termination and ENI availability...
+2025-03-29 22:35:13,903 - ec2_restore.modules.restore_manager - INFO - New instance created with ID: i-0b72a69b2bc4cf4ff
+2025-03-29 22:35:13,903 - ec2_restore.modules.restore_manager - INFO - Waiting for new instance to be fully available in AWS...
+2025-03-29 22:35:14,024 - ec2_restore.modules.aws_client - INFO - Instance i-0b72a69b2bc4cf4ff is now available in AWS
+2025-03-29 22:35:14,024 - ec2_restore.modules.restore_manager - INFO - Restoring instance tags...
+2025-03-29 22:35:14,379 - ec2_restore.modules.aws_client - INFO - Created tags for resource i-0b72a69b2bc4cf4ff
+2025-03-29 22:35:14,379 - ec2_restore.modules.restore_manager - INFO - Cleaning up old volumes...
+2025-03-29 22:35:14,379 - ec2_restore.modules.restore_manager - INFO - Deleting old volume vol-06de2758d85305e44
+2025-03-29 22:35:14,486 - ec2_restore.modules.aws_client - ERROR - Error deleting volume vol-06de2758d85305e44: An error occurred (InvalidVolume.NotFound) when calling the DeleteVolume operation: The volume 'vol-06de2758d85305e44' does not exist.
+2025-03-29 22:35:14,486 - ec2_restore.modules.restore_manager - ERROR - Error deleting old volume vol-06de2758d85305e44: An error occurred (InvalidVolume.NotFound) when calling the DeleteVolume operation: The volume 'vol-06de2758d85305e44' does not exist.
+2025-03-29 22:35:14,486 - ec2_restore.modules.restore_manager - INFO - Deleting old volume vol-01827353fb93147be
+2025-03-29 22:35:14,998 - ec2_restore.modules.restore_manager - INFO - Waiting for new instance i-0b72a69b2bc4cf4ff to be available...
+2025-03-29 22:36:15,345 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 159.78 seconds
+2025-03-29 22:40:51,093 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 22:40:51,101 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 22:40:51,155 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 22:40:51,155 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 22:40:54,288 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0d13edc5ba068a1fc
+2025-03-29 22:40:57,337 - ec2_restore.modules.cli - INFO - Selected restore type: volume
+2025-03-29 22:41:01,614 - ec2_restore.modules.cli - INFO - Selected volumes for restore: /dev/sda1
+2025-03-29 22:41:06,713 - ec2_restore.modules.restore_manager - INFO - Starting volume restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0d13edc5ba068a1fc
+2025-03-29 22:41:06,713 - ec2_restore.modules.restore_manager - INFO - Selected volume devices: /dev/sda1
+2025-03-29 22:41:06,840 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_224106.json in 0.13 seconds
+2025-03-29 22:41:07,046 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 22:41:07,131 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0d13edc5ba068a1fc in 0.08 seconds
+2025-03-29 22:41:07,253 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:41:07,253 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0d870465ad3551293 (/dev/sda1)
+2025-03-29 22:41:07,756 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-0821987a438dc75df for volume vol-0d870465ad3551293
+2025-03-29 22:41:07,756 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0ecfcaef4a11d9fff (/dev/sdf)
+2025-03-29 22:41:08,165 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-04c36d78ba12b4e7b for volume vol-0ecfcaef4a11d9fff
+2025-03-29 22:41:08,165 - ec2_restore.modules.restore_manager - INFO - Created 2 snapshots in 0.91 seconds
+2025-03-29 22:41:08,165 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-0e272fcbe97aef65f for device /dev/sda1
+2025-03-29 22:41:13,968 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-0a0a24dc55cdaa001 from snapshot snap-0e272fcbe97aef65f
+2025-03-29 22:41:13,968 - ec2_restore.modules.restore_manager - INFO - Created 1 new volumes in 5.80 seconds
+2025-03-29 22:41:13,968 - ec2_restore.modules.restore_manager - INFO - Stopping instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:41:35,270 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff stopped successfully
+2025-03-29 22:41:35,270 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0d870465ad3551293 from device /dev/sda1
+2025-03-29 22:41:41,066 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0d870465ad3551293
+2025-03-29 22:41:41,066 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-0a0a24dc55cdaa001 to device /dev/sda1
+2025-03-29 22:41:41,597 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-0a0a24dc55cdaa001
+2025-03-29 22:41:41,597 - ec2_restore.modules.restore_manager - INFO - Completed volume detachment and attachment in 6.33 seconds
+2025-03-29 22:41:41,597 - ec2_restore.modules.restore_manager - INFO - Starting instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:41:47,539 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff started successfully
+2025-03-29 22:41:47,539 - ec2_restore.modules.restore_manager - INFO - Volume restore completed successfully in 40.83 seconds
+2025-03-29 22:41:47,697 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 56.60 seconds
+2025-03-29 22:44:06,978 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 22:44:06,985 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 22:44:07,038 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 22:44:07,038 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 22:44:13,018 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0d13edc5ba068a1fc
+2025-03-29 22:44:15,837 - ec2_restore.modules.cli - INFO - Selected restore type: volume
+2025-03-29 22:44:21,529 - ec2_restore.modules.cli - INFO - Selected volumes for restore: /dev/sda1, /dev/sdf
+2025-03-29 22:44:23,449 - ec2_restore.modules.restore_manager - INFO - Starting volume restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0d13edc5ba068a1fc
+2025-03-29 22:44:23,449 - ec2_restore.modules.restore_manager - INFO - Selected volume devices: /dev/sda1, /dev/sdf
+2025-03-29 22:44:23,613 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_224423.json in 0.16 seconds
+2025-03-29 22:44:23,754 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 22:44:23,839 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0d13edc5ba068a1fc in 0.08 seconds
+2025-03-29 22:44:23,958 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:44:23,958 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0a0a24dc55cdaa001 (/dev/sda1)
+2025-03-29 22:44:24,364 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-0c17bd4dea0ae4aeb for volume vol-0a0a24dc55cdaa001
+2025-03-29 22:44:24,364 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0ecfcaef4a11d9fff (/dev/sdf)
+2025-03-29 22:44:24,777 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-0181c4f0c0ecea6c2 for volume vol-0ecfcaef4a11d9fff
+2025-03-29 22:44:24,777 - ec2_restore.modules.restore_manager - INFO - Created 2 snapshots in 0.82 seconds
+2025-03-29 22:44:24,778 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-0e272fcbe97aef65f for device /dev/sda1
+2025-03-29 22:44:30,631 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-0a27b2921b8d15f8b from snapshot snap-0e272fcbe97aef65f
+2025-03-29 22:44:30,631 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-01d56f2412d67b0b0 for device /dev/sdf
+2025-03-29 22:44:36,391 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-0221a5070e1d09431 from snapshot snap-01d56f2412d67b0b0
+2025-03-29 22:44:36,391 - ec2_restore.modules.restore_manager - INFO - Created 2 new volumes in 11.61 seconds
+2025-03-29 22:44:36,391 - ec2_restore.modules.restore_manager - INFO - Stopping instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:44:52,438 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff stopped successfully
+2025-03-29 22:44:52,438 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0a0a24dc55cdaa001 from device /dev/sda1
+2025-03-29 22:44:58,280 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0a0a24dc55cdaa001
+2025-03-29 22:44:58,280 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-0a27b2921b8d15f8b to device /dev/sda1
+2025-03-29 22:44:58,835 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-0a27b2921b8d15f8b
+2025-03-29 22:44:58,835 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0ecfcaef4a11d9fff from device /dev/sdf
+2025-03-29 22:45:04,484 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0ecfcaef4a11d9fff
+2025-03-29 22:45:04,484 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-0221a5070e1d09431 to device /dev/sdf
+2025-03-29 22:45:04,894 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-0221a5070e1d09431
+2025-03-29 22:45:04,894 - ec2_restore.modules.restore_manager - INFO - Completed volume detachment and attachment in 12.46 seconds
+2025-03-29 22:45:04,895 - ec2_restore.modules.restore_manager - INFO - Starting instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:45:10,850 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff started successfully
+2025-03-29 22:45:10,850 - ec2_restore.modules.restore_manager - INFO - Volume restore completed successfully in 47.40 seconds
+2025-03-29 22:45:10,978 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 64.00 seconds
+2025-03-29 22:46:59,072 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 22:46:59,080 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 22:46:59,133 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 22:46:59,133 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 22:47:02,614 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0cf40afd2ea25cc26
+2025-03-29 22:47:05,581 - ec2_restore.modules.cli - INFO - Selected restore type: volume
+2025-03-29 22:47:07,917 - ec2_restore.modules.cli - INFO - Selected volumes for restore: /dev/sda1, /dev/sdf
+2025-03-29 22:47:19,049 - ec2_restore.modules.restore_manager - INFO - Starting volume restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0cf40afd2ea25cc26
+2025-03-29 22:47:19,049 - ec2_restore.modules.restore_manager - INFO - Selected volume devices: /dev/sda1, /dev/sdf
+2025-03-29 22:47:19,186 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_224719.json in 0.14 seconds
+2025-03-29 22:47:19,369 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 22:47:19,457 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0cf40afd2ea25cc26 in 0.09 seconds
+2025-03-29 22:47:19,583 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:47:19,583 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0a27b2921b8d15f8b (/dev/sda1)
+2025-03-29 22:47:19,980 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-05a74fe0c248310af for volume vol-0a27b2921b8d15f8b
+2025-03-29 22:47:19,981 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0221a5070e1d09431 (/dev/sdf)
+2025-03-29 22:47:20,391 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-0cf5bcd88b4ab76f7 for volume vol-0221a5070e1d09431
+2025-03-29 22:47:20,391 - ec2_restore.modules.restore_manager - INFO - Created 2 snapshots in 0.81 seconds
+2025-03-29 22:47:20,391 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-07d36a8a3e78bf102 for device /dev/sda1
+2025-03-29 22:47:26,270 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-05a927ff9b8704e7c from snapshot snap-07d36a8a3e78bf102
+2025-03-29 22:47:26,272 - ec2_restore.modules.restore_manager - INFO - Waiting for new volume vol-05a927ff9b8704e7c to be available...
+2025-03-29 22:47:26,272 - ec2_restore.modules.restore_manager - ERROR - Error during volume restoration after 7.22 seconds: 'AWSClient' object has no attribute 'wait_for_volume_available'
+2025-03-29 22:47:26,272 - ec2_restore.modules.restore_manager - INFO - Cleaning up created volume vol-05a927ff9b8704e7c
+2025-03-29 22:48:19,073 - ec2_restore.modules.aws_client - ERROR - Error attaching volume vol-0f48f342f4288b6a2 to instance i-0b72a69b2bc4cf4ff: An error occurred (InvalidParameterValue) when calling the AttachVolume operation: Invalid value '/dev/sda1' for unixDevice. Attachment point /dev/sda1 is already in use
+2025-03-29 22:48:19,073 - ec2_restore.modules.restore_manager - ERROR - Error during rollback: An error occurred (InvalidParameterValue) when calling the AttachVolume operation: Invalid value '/dev/sda1' for unixDevice. Attachment point /dev/sda1 is already in use
+2025-03-29 22:48:19,074 - ec2_restore.modules.cli - ERROR - Error processing instance i-0b72a69b2bc4cf4ff after 79.94 seconds: An error occurred (InvalidParameterValue) when calling the AttachVolume operation: Invalid value '/dev/sda1' for unixDevice. Attachment point /dev/sda1 is already in use
+2025-03-29 22:50:16,685 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 197.61 seconds
+2025-03-29 22:50:18,378 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 22:50:18,385 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 22:50:18,439 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 22:50:18,439 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 22:50:21,084 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0d13edc5ba068a1fc
+2025-03-29 22:50:29,131 - ec2_restore.modules.cli - INFO - Selected restore type: volume
+2025-03-29 22:50:30,973 - ec2_restore.modules.cli - INFO - Selected volumes for restore: /dev/sda1, /dev/sdf
+2025-03-29 22:50:38,228 - ec2_restore.modules.restore_manager - INFO - Starting volume restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0d13edc5ba068a1fc
+2025-03-29 22:50:38,228 - ec2_restore.modules.restore_manager - INFO - Selected volume devices: /dev/sda1, /dev/sdf
+2025-03-29 22:50:38,355 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_225038.json in 0.13 seconds
+2025-03-29 22:50:38,541 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 22:50:38,633 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0d13edc5ba068a1fc in 0.09 seconds
+2025-03-29 22:50:38,750 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:50:38,750 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0a27b2921b8d15f8b (/dev/sda1)
+2025-03-29 22:50:39,151 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-0fde64ba539cf4f60 for volume vol-0a27b2921b8d15f8b
+2025-03-29 22:50:39,151 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0221a5070e1d09431 (/dev/sdf)
+2025-03-29 22:50:39,561 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-06bc018b77421714e for volume vol-0221a5070e1d09431
+2025-03-29 22:50:39,562 - ec2_restore.modules.restore_manager - INFO - Created 2 snapshots in 0.81 seconds
+2025-03-29 22:50:39,562 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-0e272fcbe97aef65f for device /dev/sda1
+2025-03-29 22:50:45,421 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-04481eba33b37bd3c from snapshot snap-0e272fcbe97aef65f
+2025-03-29 22:50:45,421 - ec2_restore.modules.restore_manager - INFO - Waiting for new volume vol-04481eba33b37bd3c to be available...
+2025-03-29 22:50:45,533 - ec2_restore.modules.aws_client - INFO - Volume vol-04481eba33b37bd3c is now available
+2025-03-29 22:50:45,533 - ec2_restore.modules.restore_manager - INFO - New volume vol-04481eba33b37bd3c is now available
+2025-03-29 22:50:45,533 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-01d56f2412d67b0b0 for device /dev/sdf
+2025-03-29 22:50:51,295 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-0a05ea4c7265a7e89 from snapshot snap-01d56f2412d67b0b0
+2025-03-29 22:50:51,296 - ec2_restore.modules.restore_manager - INFO - Waiting for new volume vol-0a05ea4c7265a7e89 to be available...
+2025-03-29 22:50:51,439 - ec2_restore.modules.aws_client - INFO - Volume vol-0a05ea4c7265a7e89 is now available
+2025-03-29 22:50:51,439 - ec2_restore.modules.restore_manager - INFO - New volume vol-0a05ea4c7265a7e89 is now available
+2025-03-29 22:50:51,439 - ec2_restore.modules.restore_manager - INFO - Created 2 new volumes in 11.88 seconds
+2025-03-29 22:50:51,439 - ec2_restore.modules.restore_manager - INFO - Stopping instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:51:33,237 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff stopped successfully
+2025-03-29 22:51:33,237 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0a27b2921b8d15f8b from device /dev/sda1
+2025-03-29 22:51:39,081 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0a27b2921b8d15f8b
+2025-03-29 22:51:39,081 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-04481eba33b37bd3c to device /dev/sda1
+2025-03-29 22:51:39,774 - ec2_restore.modules.aws_client - INFO - Volume vol-04481eba33b37bd3c is now attached
+2025-03-29 22:51:39,774 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-04481eba33b37bd3c
+2025-03-29 22:51:39,774 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0221a5070e1d09431 from device /dev/sdf
+2025-03-29 22:51:45,523 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0221a5070e1d09431
+2025-03-29 22:51:45,523 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-0a05ea4c7265a7e89 to device /dev/sdf
+2025-03-29 22:51:46,087 - ec2_restore.modules.aws_client - INFO - Volume vol-0a05ea4c7265a7e89 is now attached
+2025-03-29 22:51:46,087 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-0a05ea4c7265a7e89
+2025-03-29 22:51:46,087 - ec2_restore.modules.restore_manager - INFO - Completed volume detachment and attachment in 12.85 seconds
+2025-03-29 22:51:46,087 - ec2_restore.modules.restore_manager - INFO - Starting instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:51:52,150 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff started successfully
+2025-03-29 22:51:52,150 - ec2_restore.modules.restore_manager - INFO - Volume restore completed successfully in 73.92 seconds
+2025-03-29 22:51:52,279 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 93.90 seconds
+2025-03-29 22:58:23,899 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 22:58:23,907 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 22:58:23,961 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 22:58:23,961 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 22:58:26,973 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0d13edc5ba068a1fc
+2025-03-29 22:58:30,396 - ec2_restore.modules.cli - INFO - Selected restore type: volume
+2025-03-29 22:58:32,066 - ec2_restore.modules.cli - INFO - Selected volumes for restore: /dev/sda1, /dev/sdf
+2025-03-29 22:58:33,461 - ec2_restore.modules.restore_manager - INFO - Starting volume restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0d13edc5ba068a1fc
+2025-03-29 22:58:33,461 - ec2_restore.modules.restore_manager - INFO - Selected volume devices: /dev/sda1, /dev/sdf
+2025-03-29 22:58:33,585 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_225833.json in 0.12 seconds
+2025-03-29 22:58:33,718 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 22:58:33,802 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0d13edc5ba068a1fc in 0.08 seconds
+2025-03-29 22:58:33,921 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:58:33,921 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-04481eba33b37bd3c (/dev/sda1)
+2025-03-29 22:58:34,390 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-096ec8614c1a37908 for volume vol-04481eba33b37bd3c
+2025-03-29 22:58:34,391 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0a05ea4c7265a7e89 (/dev/sdf)
+2025-03-29 22:58:34,800 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-0ba20dc4d9ae9ad56 for volume vol-0a05ea4c7265a7e89
+2025-03-29 22:58:34,800 - ec2_restore.modules.restore_manager - INFO - Created 2 snapshots in 0.88 seconds
+2025-03-29 22:58:34,800 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-0e272fcbe97aef65f for device /dev/sda1
+2025-03-29 22:58:40,594 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-0076faa87d1d524a0 from snapshot snap-0e272fcbe97aef65f
+2025-03-29 22:58:40,594 - ec2_restore.modules.restore_manager - INFO - Waiting for new volume vol-0076faa87d1d524a0 to be available...
+2025-03-29 22:58:40,737 - ec2_restore.modules.aws_client - INFO - Volume vol-0076faa87d1d524a0 is now available
+2025-03-29 22:58:40,737 - ec2_restore.modules.restore_manager - INFO - New volume vol-0076faa87d1d524a0 is now available
+2025-03-29 22:58:40,737 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-01d56f2412d67b0b0 for device /dev/sdf
+2025-03-29 22:58:46,511 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-0c317db648aaa452d from snapshot snap-01d56f2412d67b0b0
+2025-03-29 22:58:46,512 - ec2_restore.modules.restore_manager - INFO - Waiting for new volume vol-0c317db648aaa452d to be available...
+2025-03-29 22:58:46,614 - ec2_restore.modules.aws_client - INFO - Volume vol-0c317db648aaa452d is now available
+2025-03-29 22:58:46,614 - ec2_restore.modules.restore_manager - INFO - New volume vol-0c317db648aaa452d is now available
+2025-03-29 22:58:46,615 - ec2_restore.modules.restore_manager - INFO - Created 2 new volumes in 11.81 seconds
+2025-03-29 22:58:46,984 - ec2_restore.modules.restore_manager - INFO - Stopping instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:59:28,585 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff stopped successfully
+2025-03-29 22:59:28,585 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-04481eba33b37bd3c from device /dev/sda1
+2025-03-29 22:59:34,319 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-04481eba33b37bd3c
+2025-03-29 22:59:34,319 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-0076faa87d1d524a0 to device /dev/sda1
+2025-03-29 22:59:34,936 - ec2_restore.modules.aws_client - INFO - Volume vol-0076faa87d1d524a0 is now attached
+2025-03-29 22:59:34,936 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-0076faa87d1d524a0
+2025-03-29 22:59:34,936 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0a05ea4c7265a7e89 from device /dev/sdf
+2025-03-29 22:59:40,750 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0a05ea4c7265a7e89
+2025-03-29 22:59:40,750 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-0c317db648aaa452d to device /dev/sdf
+2025-03-29 22:59:41,273 - ec2_restore.modules.aws_client - INFO - Volume vol-0c317db648aaa452d is now attached
+2025-03-29 22:59:41,273 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-0c317db648aaa452d
+2025-03-29 22:59:41,273 - ec2_restore.modules.restore_manager - INFO - Completed volume detachment and attachment in 12.69 seconds
+2025-03-29 22:59:41,273 - ec2_restore.modules.restore_manager - INFO - Starting instance i-0b72a69b2bc4cf4ff
+2025-03-29 22:59:47,262 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff started successfully
+2025-03-29 22:59:47,533 - ec2_restore.modules.restore_manager - INFO - Volume restore completed successfully in 74.07 seconds
+2025-03-29 22:59:47,675 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 83.78 seconds
+2025-03-29 23:01:33,421 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 23:01:33,428 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 23:01:33,482 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 23:01:33,482 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 23:01:35,770 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0cf40afd2ea25cc26
+2025-03-29 23:01:38,913 - ec2_restore.modules.cli - INFO - Selected restore type: volume
+2025-03-29 23:01:41,549 - ec2_restore.modules.cli - INFO - Selected volumes for restore: /dev/sda1, /dev/sdf
+2025-03-29 23:01:44,310 - ec2_restore.modules.restore_manager - INFO - Starting volume restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0cf40afd2ea25cc26
+2025-03-29 23:01:44,310 - ec2_restore.modules.restore_manager - INFO - Selected volume devices: /dev/sda1, /dev/sdf
+2025-03-29 23:01:44,443 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_230144.json in 0.13 seconds
+2025-03-29 23:01:44,652 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 23:01:44,750 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0cf40afd2ea25cc26 in 0.10 seconds
+2025-03-29 23:01:44,877 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:01:44,877 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0076faa87d1d524a0 (/dev/sda1)
+2025-03-29 23:01:45,365 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-05992eea3095ec9d1 for volume vol-0076faa87d1d524a0
+2025-03-29 23:01:45,365 - ec2_restore.modules.restore_manager - INFO - Creating snapshot for volume vol-0c317db648aaa452d (/dev/sdf)
+2025-03-29 23:01:45,776 - ec2_restore.modules.restore_manager - INFO - Created snapshot snap-08a947977468a57bb for volume vol-0c317db648aaa452d
+2025-03-29 23:01:45,776 - ec2_restore.modules.restore_manager - INFO - Created 2 snapshots in 0.90 seconds
+2025-03-29 23:01:45,776 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-07d36a8a3e78bf102 for device /dev/sda1
+2025-03-29 23:01:51,636 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-07fa4792372b2abc2 from snapshot snap-07d36a8a3e78bf102
+2025-03-29 23:01:51,636 - ec2_restore.modules.restore_manager - INFO - Waiting for new volume vol-07fa4792372b2abc2 to be available...
+2025-03-29 23:01:51,818 - ec2_restore.modules.aws_client - INFO - Volume vol-07fa4792372b2abc2 is now available
+2025-03-29 23:01:51,819 - ec2_restore.modules.restore_manager - INFO - New volume vol-07fa4792372b2abc2 is now available
+2025-03-29 23:01:51,819 - ec2_restore.modules.restore_manager - INFO - Creating new volume from AMI snapshot snap-027e7ee7980b88fa5 for device /dev/sdf
+2025-03-29 23:01:57,621 - ec2_restore.modules.restore_manager - INFO - Created new volume vol-0c738ab65b3b5757d from snapshot snap-027e7ee7980b88fa5
+2025-03-29 23:01:57,621 - ec2_restore.modules.restore_manager - INFO - Waiting for new volume vol-0c738ab65b3b5757d to be available...
+2025-03-29 23:01:57,756 - ec2_restore.modules.aws_client - INFO - Volume vol-0c738ab65b3b5757d is now available
+2025-03-29 23:01:57,756 - ec2_restore.modules.restore_manager - INFO - New volume vol-0c738ab65b3b5757d is now available
+2025-03-29 23:01:57,756 - ec2_restore.modules.restore_manager - INFO - Created 2 new volumes in 11.98 seconds
+2025-03-29 23:01:58,068 - ec2_restore.modules.restore_manager - INFO - Stopping instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:02:50,263 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff stopped successfully
+2025-03-29 23:02:50,263 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0076faa87d1d524a0 from device /dev/sda1
+2025-03-29 23:02:56,029 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0076faa87d1d524a0
+2025-03-29 23:02:56,029 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-07fa4792372b2abc2 to device /dev/sda1
+2025-03-29 23:02:56,582 - ec2_restore.modules.aws_client - INFO - Volume vol-07fa4792372b2abc2 is now attached
+2025-03-29 23:02:56,583 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-07fa4792372b2abc2
+2025-03-29 23:02:56,583 - ec2_restore.modules.restore_manager - INFO - Detaching volume vol-0c317db648aaa452d from device /dev/sdf
+2025-03-29 23:03:02,404 - ec2_restore.modules.restore_manager - INFO - Detached volume vol-0c317db648aaa452d
+2025-03-29 23:03:02,405 - ec2_restore.modules.restore_manager - INFO - Attaching new volume vol-0c738ab65b3b5757d to device /dev/sdf
+2025-03-29 23:03:03,000 - ec2_restore.modules.aws_client - INFO - Volume vol-0c738ab65b3b5757d is now attached
+2025-03-29 23:03:03,001 - ec2_restore.modules.restore_manager - INFO - Attached new volume vol-0c738ab65b3b5757d
+2025-03-29 23:03:03,001 - ec2_restore.modules.restore_manager - INFO - Completed volume detachment and attachment in 12.74 seconds
+2025-03-29 23:03:03,001 - ec2_restore.modules.restore_manager - INFO - Starting instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:03:08,991 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff started successfully
+2025-03-29 23:03:09,270 - ec2_restore.modules.restore_manager - INFO - Volume restore completed successfully in 84.96 seconds
+2025-03-29 23:03:09,826 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 96.41 seconds

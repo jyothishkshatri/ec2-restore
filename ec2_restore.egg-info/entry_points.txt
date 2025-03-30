@@ -1,0 +1,2 @@
+[console_scripts]
+ec2-restore = ec2_restore.modules.cli:cli

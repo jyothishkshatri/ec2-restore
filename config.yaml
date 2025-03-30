@@ -1,0 +1,9 @@
+aws:
+  profile: default  # AWS profile to use. If not specified, will use default profile
+  region: us-east-1  # Default region, can be overridden by environment variable
+
+restore:
+  max_amis: 5  # Number of AMIs to show in selection
+  backup_metadata: true  # Whether to backup instance metadata before restoration
+  log_level: INFO  # Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  log_file: ec2_restore.log  # Log file path 
