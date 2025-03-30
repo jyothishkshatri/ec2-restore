@@ -257,3 +257,41 @@
 2025-03-29 23:03:08,991 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff started successfully
 2025-03-29 23:03:09,270 - ec2_restore.modules.restore_manager - INFO - Volume restore completed successfully in 84.96 seconds
 2025-03-29 23:03:09,826 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 96.41 seconds
+2025-03-29 23:07:03,360 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 23:07:03,367 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 23:07:03,419 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 23:07:03,419 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 23:07:05,841 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0d13edc5ba068a1fc
+2025-03-29 23:07:08,300 - ec2_restore.modules.cli - INFO - Selected restore type: full
+2025-03-29 23:07:10,047 - ec2_restore.modules.restore_manager - INFO - Starting full instance restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0d13edc5ba068a1fc
+2025-03-29 23:07:10,173 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_230710.json in 0.13 seconds
+2025-03-29 23:07:10,371 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 23:07:10,459 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0d13edc5ba068a1fc in 0.09 seconds
+2025-03-29 23:07:10,578 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:07:10,580 - ec2_restore.modules.restore_manager - INFO - Stopping instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:08:02,601 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff stopped successfully
+2025-03-29 23:08:02,601 - ec2_restore.modules.restore_manager - INFO - Modifying network interface eni-0a199470cde27d15c to persist
+2025-03-29 23:08:02,601 - ec2_restore.modules.restore_manager - ERROR - Error during full instance restoration after 52.55 seconds: 'AWSClient' object has no attribute 'modify_network_interface'
+2025-03-29 23:08:02,601 - ec2_restore.modules.cli - ERROR - Error processing instance i-0b72a69b2bc4cf4ff after 59.18 seconds: 'AWSClient' object has no attribute 'modify_network_interface'
+2025-03-29 23:09:20,798 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 137.44 seconds
+2025-03-29 23:09:56,146 - ec2_restore.modules.cli - INFO - Starting EC2 instance restore process
+2025-03-29 23:09:56,153 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-29 23:09:56,206 - ec2_restore.modules.aws_client - INFO - Initialized AWS client with profile: default, region: us-east-1
+2025-03-29 23:09:56,206 - ec2_restore.modules.cli - INFO - Processing 1 instances: i-0b72a69b2bc4cf4ff
+2025-03-29 23:09:58,699 - ec2_restore.modules.cli - INFO - Selected AMI: ami-0fedd9da4d200549c
+2025-03-29 23:10:00,941 - ec2_restore.modules.cli - INFO - Selected restore type: full
+2025-03-29 23:10:02,449 - ec2_restore.modules.restore_manager - INFO - Starting full instance restore for instance i-0b72a69b2bc4cf4ff from AMI ami-0fedd9da4d200549c
+2025-03-29 23:10:02,588 - ec2_restore.modules.restore_manager - INFO - Instance metadata backed up to backups/instance_i-0b72a69b2bc4cf4ff_20250329_231002.json in 0.14 seconds
+2025-03-29 23:10:02,711 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff current state: running
+2025-03-29 23:10:02,788 - ec2_restore.modules.restore_manager - INFO - Retrieved 2 volumes from AMI ami-0fedd9da4d200549c in 0.08 seconds
+2025-03-29 23:10:02,916 - ec2_restore.modules.restore_manager - INFO - Found 2 current volumes on instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:10:02,918 - ec2_restore.modules.restore_manager - INFO - Stopping instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:10:19,035 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff stopped successfully
+2025-03-29 23:10:19,035 - ec2_restore.modules.restore_manager - INFO - Modifying network interface eni-0a199470cde27d15c to persist
+2025-03-29 23:10:19,486 - ec2_restore.modules.aws_client - INFO - Modified network interface eni-0a199470cde27d15c delete on termination to False
+2025-03-29 23:10:19,486 - ec2_restore.modules.restore_manager - INFO - Terminating instance i-0b72a69b2bc4cf4ff
+2025-03-29 23:10:30,167 - ec2_restore.modules.restore_manager - INFO - Instance i-0b72a69b2bc4cf4ff terminated successfully
+2025-03-29 23:10:30,168 - ec2_restore.modules.restore_manager - INFO - Creating new instance with same configuration
+2025-03-29 23:10:30,168 - ec2_restore.modules.restore_manager - ERROR - Error during full instance restoration after 27.72 seconds: 'AWSClient' object has no attribute 'prepare_launch_params'
+2025-03-29 23:10:30,169 - ec2_restore.modules.cli - ERROR - Error processing instance i-0b72a69b2bc4cf4ff after 33.96 seconds: 'AWSClient' object has no attribute 'prepare_launch_params'
+2025-03-29 23:12:14,568 - ec2_restore.modules.cli - INFO - EC2 instance restore process completed in 138.42 seconds
