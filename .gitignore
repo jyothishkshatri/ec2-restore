@@ -42,6 +42,7 @@ backups/
 *.log
 config.yaml
 ec2_restore.egg-info/
+.pypirc
 
 # Distribution
 dist/
