@@ -19,7 +19,11 @@ class CLI:
 
             # Generate restore report
             report_file = self.restore_manager.generate_restore_report(
-                instance_id, backup_file, restore_type, new_instance_id
+                instance_id=instance_id,
+                restore_type=restore_type,
+                ami_id=ami_id,
+                new_instance_id=new_instance_id,
+                backup_file=backup_file
             )
             self.console.print(f"[green]Restore report generated: {report_file}[/green]")
 
@@ -100,4 +104,4 @@ class CLI:
 
         except Exception as e:
             self.console.print(f"[red]Error during restore operation: {str(e)}[/red]")
-            raise click.Abort() 
+            raise click.Abort()

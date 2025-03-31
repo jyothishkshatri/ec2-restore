@@ -1,0 +1,30 @@
+aws:
+  region: us-west-2  # Your AWS region
+  profile: default   # AWS profile name (optional)
+
+restore:
+  # Default settings for instance restore
+  instance_type: t2.micro  # Default instance type for new instances
+  subnet_id: subnet-xxxxx  # Default subnet ID (optional)
+  security_groups:  # Default security groups (optional)
+    - sg-xxxxx
+  tags:  # Default tags to apply to restored instances
+    - Key: RestoredBy
+      Value: ec2-restore
+    - Key: RestoreDate
+      Value: "{{timestamp}}"
+
+  # Volume restore settings
+  volume:
+    delete_on_termination: false  # Whether to delete volumes on instance termination
+    volume_type: gp3  # Default volume type for new volumes
+    iops: 3000  # IOPS for io1/io2 volumes (optional)
+    throughput: 125  # Throughput for gp3 volumes (optional)
+
+  # Backup settings
+  backup:
+    enabled: true  # Whether to create backups before restore
+    retention_days: 7  # How long to keep backups
+    tags:  # Tags for backup resources
+      - Key: BackupType
+        Value: pre-restore 

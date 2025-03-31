@@ -6,12 +6,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="ec2_restore",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Jyothish Kshatri",
+    author_email="kshatri.jyothish3@gmail.com",
     description="A powerful tool for restoring EC2 instances from AMIs",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/ec2_restore",
+    url="https://github.com/jyothishkshatri/ec2-restore.git",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
