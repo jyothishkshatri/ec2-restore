@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="ec2_restore",
+    name="ec2-restore",
     version="1.0.0",
     author="Jyothish Kshatri",
     author_email="kshatri.jyothish3@gmail.com",
