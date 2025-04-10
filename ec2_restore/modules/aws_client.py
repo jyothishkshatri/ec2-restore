@@ -1,3 +1,8 @@
+"""
+AWS Client Module
+
+This module handles all AWS API interactions for the EC2 Restore Tool.
+"""
 import logging
 import time
 from typing import Dict, List, Optional
@@ -14,6 +19,8 @@ class AWSClient:
             self.session = boto3.Session(profile_name=profile_name, region_name=region)
             self.ec2_client = self.session.client('ec2')
             self.ec2_resource = self.session.resource('ec2')
+            self.ssm_client = self.session.client('ssm')  # Add Systems Manager client
+            self.region = region or self.session.region_name
             logger.info(f"Initialized AWS client with profile: {profile_name}, region: {region}")
         except Exception as e:
             logger.error(f"Error initializing AWS client: {str(e)}")

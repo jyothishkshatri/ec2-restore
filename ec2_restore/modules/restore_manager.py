@@ -7,14 +7,17 @@ from pathlib import Path
 from .aws_client import AWSClient
 import time
 from .display import display_volume_changes
+from .ssm_manager import SSMManager
 
 logger = logging.getLogger(__name__)
 
 class RestoreManager:
-    def __init__(self, aws_client: AWSClient, backup_dir: str = "backups"):
-        """Initialize the restore manager."""
+    def __init__(self, aws_client: AWSClient, config: Dict):
+        """Initialize the Restore Manager with AWS client and configuration."""
         self.aws_client = aws_client
-        self.backup_dir = Path(backup_dir)
+        self.config = config
+        self.ssm_manager = SSMManager(aws_client, config)
+        self.backup_dir = Path(config.get('backup_dir', "backups"))
         self.backup_dir.mkdir(exist_ok=True)
 
     def backup_instance_metadata(self, instance_id: str) -> str:
@@ -150,9 +153,16 @@ class RestoreManager:
             new_instance_id = self.aws_client.create_instance_with_config(launch_params)
             logger.info(f"New instance created with ID: {new_instance_id}")
 
-            # Wait for the new instance to be fully available in AWS
-            logger.info("Waiting for new instance to be fully available in AWS...")
-            self.aws_client.wait_for_instance_availability(new_instance_id, timeout=300)  # Wait up to 5 minutes
+            # Wait for the new instance to be fully available
+            logger.info("Waiting for new instance to be fully available...")
+            self.aws_client.wait_for_instance_availability(new_instance_id)
+
+            # Execute Systems Manager commands if enabled
+            if self.ssm_manager.is_enabled():
+                logger.info("Executing Systems Manager commands...")
+                if not self.ssm_manager.run_commands(new_instance_id):
+                    logger.warning("Some Systems Manager commands failed, but instance restore was successful")
+                    console.print("[yellow]Warning: Some Systems Manager commands failed, but instance restore was successful[/yellow]")
 
             # Restore tags
             if 'Tags' in instance:
