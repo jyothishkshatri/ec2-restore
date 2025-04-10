@@ -995,3 +995,77 @@ class AWSClient:
         except Exception as e:
             logger.error(f"Unexpected error retrieving instances: {str(e)}")
             raise
+
+    def send_command(self, instance_id: str, command: str, document_name: str, timeout: int, 
+                    output_s3_bucket: str = '', output_s3_prefix: str = '') -> str:
+        """Send a Systems Manager command to an instance.
+        
+        Args:
+            instance_id: The ID of the instance to run the command on
+            command: The command to execute
+            document_name: The SSM document to use
+            timeout: Command timeout in seconds
+            output_s3_bucket: Optional S3 bucket for command output
+            output_s3_prefix: Optional S3 prefix for command output
+            
+        Returns:
+            str: The command ID
+        """
+        try:
+            # Prepare command parameters
+            parameters = {
+                'commands': [command],
+                'executionTimeout': [str(timeout)]
+            }
+
+            # Add S3 output configuration if specified
+            if output_s3_bucket:
+                parameters['outputS3BucketName'] = [output_s3_bucket]
+                if output_s3_prefix:
+                    parameters['outputS3KeyPrefix'] = [output_s3_prefix]
+
+            # Send the command
+            response = self.ssm_client.send_command(
+                InstanceIds=[instance_id],
+                DocumentName=document_name,
+                Parameters=parameters,
+                TimeoutSeconds=timeout
+            )
+
+            return response['Command']['CommandId']
+
+        except Exception as e:
+            logger.error(f"Error sending SSM command: {str(e)}")
+            raise
+
+    def get_command_status(self, command_id: str, instance_id: str) -> tuple[str, str]:
+        """Get the status and output of a Systems Manager command.
+        
+        Args:
+            command_id: The ID of the command to check
+            instance_id: The ID of the instance the command was run on
+            
+        Returns:
+            tuple[str, str]: A tuple containing (status, output)
+        """
+        try:
+            result = self.ssm_client.get_command_invocation(
+                CommandId=command_id,
+                InstanceId=instance_id
+            )
+
+            status = result['Status']
+            output = ''
+
+            if status == 'Success':
+                if 'StandardOutputContent' in result:
+                    output = result['StandardOutputContent']
+            else:
+                if 'StandardErrorContent' in result:
+                    output = result['StandardErrorContent']
+
+            return status, output
+
+        except Exception as e:
+            logger.error(f"Error getting command status: {str(e)}")
+            raise

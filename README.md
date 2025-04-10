@@ -1,14 +1,19 @@
 # EC2 Restore Tool
 
-A powerful tool for restoring EC2 instances from AMIs with support for Systems Manager command execution.
+A powerful command-line tool for restoring EC2 instances from AMIs with advanced features and detailed reporting.
 
 ## Features
 
-- Full instance restore from AMI
-- Volume-level restore
-- Systems Manager command execution after restore
-- Detailed restoration reports
-- Beautiful CLI interface with progress tracking
+- **Full Instance Restore**: Create a new instance from an AMI while preserving network configuration
+- **Volume-Level Restore**: Restore specific volumes from an AMI to an existing instance
+- **Detailed Progress Tracking**: Real-time progress updates with rich console output
+- **Comprehensive Reporting**: Generate detailed restoration reports
+- **Network Configuration Preservation**: Maintain private IP addresses and network settings
+- **Systems Manager Integration**: Execute post-restore commands using AWS Systems Manager
+- **Instance Metadata Backup**: Automatic backup of instance metadata before restoration
+- **Volume Change Visualization**: Clear display of volume changes before and after restoration
+- **Instance Change Tracking**: Detailed comparison of instance configurations
+- **Error Handling & Rollback**: Robust error handling with automatic rollback capabilities
 
 ## Installation
 
@@ -16,30 +21,40 @@ A powerful tool for restoring EC2 instances from AMIs with support for Systems M
 pip install ec2-restore
 ```
 
+## Version Information
+
+To check the installed version of the tool:
+
+```bash
+ec2-restore --version
+```
+
+This will display the version in the format: `ec2-restore, version X.X.X`
+
 ## Configuration
 
-Create a `config.yaml` file with the following structure:
+Create a `config.yaml` file in your working directory:
 
 ```yaml
 aws:
-  profile: default  # AWS profile to use
-  region: us-east-1  # Default region
+  profile: default  # AWS profile to use. If not specified, will use default profile
+  region: us-east-1  # Default region, can be overridden by environment variable
 
 restore:
   max_amis: 5  # Number of AMIs to show in selection
-  backup_metadata: true  # Whether to backup instance metadata
-  log_level: INFO  # Logging level
+  backup_metadata: true  # Whether to backup instance metadata before restoration
+  log_level: INFO  # Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
   log_file: ec2_restore.log  # Log file path
 
 systems_manager:
-  enabled: false  # Whether to run Systems Manager commands after restore
+  enabled: true  # Whether to run Systems Manager commands after restore
   commands:  # List of commands to run after instance restore
-    - name: "Update System Packages"  # Friendly name for the command
-      command: "yum update -y"  # The actual command to run
+    - name: "check os version"  # Friendly name for the command
+      command: "cat /etc/os-release"  # The actual command to run
       timeout: 300  # Command timeout in seconds
       wait_for_completion: true  # Whether to wait for command completion
-    - name: "Install Required Packages"
-      command: "yum install -y aws-cli"
+    - name: "check disk size"
+      command: "df -kh"
       timeout: 300
       wait_for_completion: true
   document_name: "AWS-RunShellScript"  # Default SSM document to use
@@ -47,53 +62,110 @@ systems_manager:
   output_s3_prefix: ""  # Optional S3 prefix for command output
 ```
 
-### Systems Manager Configuration
-
-The Systems Manager section allows you to configure commands that will be executed after a successful instance restore:
-
-- `enabled`: Set to `true` to enable Systems Manager command execution
-- `commands`: List of commands to execute, each with:
-  - `name`: Friendly name for the command
-  - `command`: The actual command to run
-  - `timeout`: Command timeout in seconds
-  - `wait_for_completion`: Whether to wait for command completion
-- `document_name`: The SSM document to use (default: "AWS-RunShellScript")
-- `output_s3_bucket`: Optional S3 bucket for command output
-- `output_s3_prefix`: Optional S3 prefix for command output
-
-## Usage
+## Usage Examples
 
 ### Full Instance Restore
 
 ```bash
+# Restore by instance ID
 ec2-restore restore --instance-id i-1234567890abcdef0
+
+# Restore by instance name
+ec2-restore restore --instance-name my-instance
+
+# Restore multiple instances
+ec2-restore restore --instance-ids i-1234567890abcdef0,i-0987654321fedcba0
 ```
 
-The tool will:
-1. Display available AMIs
-2. Show instance changes before restore
-3. Create a new instance
-4. Execute Systems Manager commands (if enabled)
-5. Display final instance changes
-6. Generate a restore report
+Example output for full instance restore:
+```
+✓ Getting details for instance i-1234567890abcdef0...
+✓ Backing up instance metadata...
+✓ Fetching available AMIs...
+
+Available AMIs:
+┌───────┬────────────────────┬───────────────────────┬────────────────────────────┐
+│ Index │ AMI ID            │ Creation Date        │ Description                │
+├───────┼────────────────────┼───────────────────────┼────────────────────────────┤
+│ 1     │ ami-1234567890    │ 2024-03-15T10:30:00Z │ Production backup          │
+│ 2     │ ami-0987654321    │ 2024-03-14T15:45:00Z │ Daily backup              │
+└───────┴────────────────────┴───────────────────────┴────────────────────────────┘
+
+Instance Changes Before Restore:
+┌────────────────────┬────────────────────┬────────────────────┬──────────┐
+│ Property           │ Previous Value     │ New Value          │ Status   │
+├────────────────────┼────────────────────┼────────────────────┼──────────┤
+│ Instance ID        │ i-1234567890abcdef0│ Pending            │ Pending  │
+│ Instance Name      │ prod-server-1      │ prod-server-1      │ Preserved │
+│ Instance Type      │ t2.micro           │ t2.micro           │ Preserved │
+│ Private IP         │ 10.0.1.100         │ Pending            │ Pending  │
+└────────────────────┴────────────────────┴────────────────────┴──────────┘
+
+✓ Performing full instance restore...
+✓ New instance created with ID: i-0987654321fedcba0
+✓ Waiting for instance to be fully available...
+✓ Getting new instance details...
+✓ Getting AMI volumes for report...
+
+Instance Changes After Restore:
+┌────────────────────┬────────────────────┬────────────────────┬──────────┐
+│ Property           │ Previous Value     │ New Value          │ Status   │
+├────────────────────┼────────────────────┼────────────────────┼──────────┤
+│ Instance ID        │ i-1234567890abcdef0│ i-0987654321fedcba0│ Changed  │
+│ Instance Name      │ prod-server-1      │ prod-server-1      │ Preserved │
+│ Instance Type      │ t2.micro           │ t2.micro           │ Preserved │
+│ Private IP         │ 10.0.1.100         │ 10.0.1.100         │ Preserved │
+└────────────────────┴────────────────────┴────────────────────┴──────────┘
+```
 
 ### Volume Restore
 
 ```bash
-ec2-restore restore --instance-id i-1234567890abcdef0 --type volume
+# Restore specific volumes
+ec2-restore restore --instance-id i-1234567890abcdef0 --restore-type volume
 ```
 
-### Restore by Instance Name
+Example output for volume restore:
+```
+✓ Getting details for instance i-1234567890abcdef0...
+✓ Backing up instance metadata...
+✓ Fetching available AMIs...
 
-```bash
-ec2-restore restore --instance-name my-instance
+Available AMIs:
+┌───────┬────────────────────┬───────────────────────┬────────────────────────────┐
+│ Index │ AMI ID            │ Creation Date        │ Description                │
+├───────┼────────────────────┼───────────────────────┼────────────────────────────┤
+│ 1     │ ami-1234567890    │ 2024-03-15T10:30:00Z │ Production backup          │
+└───────┴────────────────────┴───────────────────────┴────────────────────────────┘
+
+Current Volume Configuration:
+┌───────┬──────────┬───────────┬──────────┬──────────────────────┐
+│ Index │ Device   │ Size (GB) │ Type     │ Delete on Termination │
+├───────┼──────────┼───────────┼──────────┼──────────────────────┤
+│ 1     │ /dev/sda1│ 8         │ gp2      │ True                 │
+│ 2     │ /dev/sdb │ 20        │ gp3      │ False                │
+└───────┴──────────┴───────────┴──────────┴──────────────────────┘
+
+✓ Performing volume restore...
+✓ Volume restore completed successfully
+
+Volume Changes:
+┌──────────┬────────────────────┬────────────────────┬──────────┐
+│ Device   │ Previous Volume ID │ New Volume ID      │ Status   │
+├──────────┼────────────────────┼────────────────────┼──────────┤
+│ /dev/sda1│ vol-1234567890    │ vol-0987654321     │ Changed  │
+│ /dev/sdb │ vol-2345678901    │ vol-1098765432     │ Changed  │
+└──────────┴────────────────────┴────────────────────┴──────────┘
 ```
 
-### Restore Multiple Instances
+### Options
 
-```bash
-ec2-restore restore --instance-ids i-1234567890abcdef0,i-0987654321fedcba0
-```
+- `--instance-id`: EC2 instance ID to restore
+- `--instance-name`: EC2 instance name (tag) to restore
+- `--instance-ids`: Comma-separated list of EC2 instance IDs to restore
+- `--restore-type`: Type of restore (full or volume)
+- `--config`: Path to configuration file (default: config.yaml)
+- `--version` or `-v`: Display version information
 
 ## Development
 
@@ -109,9 +181,9 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install dependencies:
+3. Install development dependencies:
 ```bash
-pip install -e .
+pip install -e ".[dev]"
 ```
 
 ## License

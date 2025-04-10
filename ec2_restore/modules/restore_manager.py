@@ -153,6 +153,14 @@ class RestoreManager:
             new_instance_id = self.aws_client.create_instance_with_config(launch_params)
             logger.info(f"New instance created with ID: {new_instance_id}")
 
+            # Restore tags immediately after instance creation
+            if 'Tags' in instance:
+                logger.info("Restoring instance tags...")
+                self.aws_client.create_tags(
+                    new_instance_id,
+                    instance['Tags']
+                )
+
             # Wait for the new instance to be fully available
             logger.info("Waiting for new instance to be fully available...")
             self.aws_client.wait_for_instance_availability(new_instance_id)
@@ -160,17 +168,7 @@ class RestoreManager:
             # Execute Systems Manager commands if enabled
             if self.ssm_manager.is_enabled():
                 logger.info("Executing Systems Manager commands...")
-                if not self.ssm_manager.run_commands(new_instance_id):
-                    logger.warning("Some Systems Manager commands failed, but instance restore was successful")
-                    console.print("[yellow]Warning: Some Systems Manager commands failed, but instance restore was successful[/yellow]")
-
-            # Restore tags
-            if 'Tags' in instance:
-                logger.info("Restoring instance tags...")
-                self.aws_client.create_tags(
-                    new_instance_id,
-                    instance['Tags']
-                )
+                self.ssm_manager.run_commands(new_instance_id)  # Don't wait for completion
 
             # Clean up old volumes
             if old_volumes:

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="ec2-restore",
-    version="1.0.2",
+    version="1.0.4",
     author="Jyothish Kshatri",
     author_email="kshatri.jyothish3@gmail.com",
     description="A powerful tool for restoring EC2 instances from AMIs",

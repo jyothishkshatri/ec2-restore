@@ -22,32 +22,38 @@ wheels/
 
 # Virtual Environment
 venv/
-env/
 ENV/
+env/
 .env
-.venv
-env.bak/
-venv.bak/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
-.DS_Store
 
-# Project specific
-logs/
-backups/
+# Logs
 *.log
+logs/
+
+# Local configuration
 config.yaml
-ec2_restore.egg-info/
 .pypirc
 
-# Distribution
-dist/
-build/
-*.egg-info/
+# AWS credentials
+.aws/
+aws_credentials.json
+
+# Backup files
+backups/
+*.bak
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Project specific
+ec2_restore.egg-info/
 
 # Test coverage
 .coverage
