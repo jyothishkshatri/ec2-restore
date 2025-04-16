@@ -1,5 +1,12 @@
 include LICENSE
 include README.md
 include config.yaml.example
+include ec2_restore/modules/*.py
+include ec2_restore/config/*.yaml
 recursive-include ec2_restore *.py
-recursive-include ec2_restore *.yaml 
+recursive-include ec2_restore/config *.yaml
+recursive-include ec twice_restore/modules *.py
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude *.pyo
+global-exclude .git* 

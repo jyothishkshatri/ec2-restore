@@ -1,8 +1,20 @@
 """
-EC2 Instance Restore Tool
+EC2 Restore Tool
 
-A powerful and user-friendly tool for restoring EC2 instances from AMIs with support
-for both full instance restoration and volume-level restoration.
+A powerful tool for restoring EC2 instances from AMIs with advanced features and detailed reporting.
 """
 
-__version__ = '1.0.0' 
+from ec2_restore.modules.cli import cli
+from ec2_restore.modules.display import display_volume_changes, display_instance_changes
+from ec2_restore.modules.restore_manager import RestoreManager
+from ec2_restore.modules.aws_client import AWSClient
+
+__version__ = "1.0.9"
+
+__all__ = [
+    'cli',
+    'display_volume_changes',
+    'display_instance_changes',
+    'RestoreManager',
+    'AWSClient',
+] 

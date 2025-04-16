@@ -1,0 +1,24 @@
+aws:
+  profile: default  # AWS profile to use. If not specified, will use default profile
+  region: us-east-1  # Default region, can be overridden by environment variable
+
+restore:
+  max_amis: 5  # Number of AMIs to show in selection
+  backup_metadata: true  # Whether to backup instance metadata before restoration
+  log_level: INFO  # Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  log_file: ec2_restore.log  # Log file path
+
+systems_manager:
+  enabled: true  # Whether to run Systems Manager commands after restore
+  commands:  # List of commands to run after instance restore
+    - name: "check os version"  # Friendly name for the command
+      command: "cat /etc/os-release"  # The actual command to run
+      timeout: 300  # Command timeout in seconds
+      wait_for_completion: true  # Whether to wait for command completion
+    - name: "check disk size"
+      command: "df -kh"
+      timeout: 300
+      wait_for_completion: true
+  document_name: "AWS-RunShellScript"  # Default SSM document to use
+  output_s3_bucket: ""  # Optional S3 bucket for command output
+  output_s3_prefix: ""  # Optional S3 prefix for command output 

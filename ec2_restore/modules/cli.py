@@ -97,7 +97,7 @@ def display_progress(description: str, duration: float):
     console.print(f"[green]✓[/green] {description} ({duration:.2f} seconds)")
 
 @click.group()
-@click.version_option(version="1.0.4", prog_name="ec2-restore", message="%(prog)s, version %(version)s")
+@click.version_option(version="1.0.7", prog_name="ec2-restore", message="%(prog)s, version %(version)s")
 def cli():
     """EC2 Instance Restore Tool"""
     pass
