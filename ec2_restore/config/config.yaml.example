@@ -7,10 +7,13 @@ restore:
   backup_metadata: true  # Whether to backup instance metadata before restoration
   log_level: INFO  # Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
   log_file: ec2_restore.log  # Log file path
+  delete_old_volumes: true  # Whether to delete old volumes after successful volume restore
 
 systems_manager:
   enabled: true  # Whether to run Systems Manager commands after restore
-  commands:  # List of commands to run after instance restore
+  # The commands below can be used both during restore and with the standalone SSM command
+  # To run these commands directly on an instance without restore: ec2-restore ssm --instance-id i-123456789
+  commands:  # List of commands to run
     - name: "check os version"  # Friendly name for the command
       command: "cat /etc/os-release"  # The actual command to run
       timeout: 300  # Command timeout in seconds

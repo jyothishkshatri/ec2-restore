@@ -14,7 +14,7 @@ if os.path.exists("config.yaml.example"):
 
 setup(
     name="ec2-restore",
-    version="1.0.9",
+    version="1.1.0",
     author="Jyothish Kshatri",
     author_email="kshatri.jyothish3@gmail.com",
     description="A tool for restoring EC2 instances from AMIs",

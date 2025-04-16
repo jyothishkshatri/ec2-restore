@@ -187,7 +187,7 @@ class RestoreManager:
             logger.error(f"Error during full instance restoration: {str(e)}")
             raise
 
-    def volume_restore(self, instance_id: str, ami_id: str, volume_devices: List[str]) -> str:
+    def volume_restore(self, instance_id: str, ami_id: str, volume_devices: List[str]) -> Dict:
         """Perform a volume-level restoration."""
         start_time = datetime.now()
         logger.info(f"Starting volume restore for instance {instance_id} from AMI {ami_id}")
@@ -196,6 +196,8 @@ class RestoreManager:
         snapshots = {}
         created_volumes = {}  # Track volumes created during the process
         original_state = None  # Track original instance state
+        old_volumes = {}  # Track old volumes for potential deletion
+        volume_changes = {}  # Track volume changes for reporting
         try:
             # Backup instance metadata
             metadata_start = datetime.now()
@@ -224,6 +226,17 @@ class RestoreManager:
             current_volumes = self.aws_client.get_instance_volumes(instance_id, is_ami=False)
             logger.info(f"Found {len(current_volumes)} current volumes on instance {instance_id}")
             
+            # Store old volumes for potential deletion and track changes
+            for volume in current_volumes:
+                if volume['Device'] in volume_devices:
+                    old_volumes[volume['Device']] = volume['VolumeId']
+                    volume_changes[volume['Device']] = {
+                        'old_volume_id': volume['VolumeId'],
+                        'old_size': volume.get('Size', 'N/A'),
+                        'old_type': volume.get('VolumeType', 'gp3'),
+                        'old_delete_on_termination': volume.get('DeleteOnTermination', True)
+                    }
+            
             # Display initial volume configuration
             logger.info("Displaying current volume configuration...")
             display_volume_changes(current_volumes, ami_volumes, volume_devices, self.aws_client)
@@ -244,7 +257,6 @@ class RestoreManager:
 
             # Create new volumes from AMI
             volume_start = datetime.now()
-            new_volumes = {}
             for volume in ami_volumes:
                 if volume['Device'] in volume_devices:
                     logger.info(f"Creating new volume from AMI snapshot {volume['VolumeId']} for device {volume['Device']}")
@@ -257,9 +269,14 @@ class RestoreManager:
                         instance['Placement']['AvailabilityZone'],
                         volume_type  # Use the volume type from AMI
                     )
-                    new_volumes[volume['Device']] = new_volume_id
-                    created_volumes[new_volume_id] = volume['Device']  # Track created volume
-                    volume['NewVolumeId'] = new_volume_id  # Store the new volume ID in the AMI volume info
+                    created_volumes[volume['Device']] = new_volume_id
+                    # Update volume changes with new volume information
+                    volume_changes[volume['Device']].update({
+                        'new_volume_id': new_volume_id,
+                        'new_size': volume.get('Size', 'N/A'),
+                        'new_type': volume_type,
+                        'new_delete_on_termination': volume.get('DeleteOnTermination', True)
+                    })
                     logger.info(f"Created new volume {new_volume_id} from snapshot {volume['VolumeId']} with type {volume_type}")
                     
                     # Wait for the new volume to be available
@@ -268,8 +285,8 @@ class RestoreManager:
                         raise Exception(f"New volume {new_volume_id} failed to become available")
                     logger.info(f"New volume {new_volume_id} is now available")
             volume_duration = datetime.now() - volume_start
-            logger.info(f"Created {len(new_volumes)} new volumes in {volume_duration.total_seconds():.2f} seconds")
-
+            logger.info(f"Created {len(created_volumes)} new volumes in {volume_duration.total_seconds():.2f} seconds")
+            
             # Display volume changes before proceeding with attachment
             logger.info("Displaying volume changes before attachment...")
             display_volume_changes(current_volumes, ami_volumes, volume_devices, self.aws_client)
@@ -313,7 +330,7 @@ class RestoreManager:
             attach_start = datetime.now()
             for volume in current_volumes:
                 if volume['Device'] in volume_devices:
-                    new_volume_id = new_volumes.get(volume['Device'])
+                    new_volume_id = created_volumes.get(volume['Device'])
                     if new_volume_id:
                         logger.info(f"Attaching new volume {new_volume_id} to device {volume['Device']}")
                         try:
@@ -347,24 +364,28 @@ class RestoreManager:
                 self.aws_client.wait_for_instance_state(instance_id, 'running')
                 logger.info(f"Instance {instance_id} started successfully")
 
+            # Delete old volumes if configured
+            if self.config['restore'].get('delete_old_volumes', False):
+                logger.info("Deleting old volumes as per configuration...")
+                for device, old_volume_id in old_volumes.items():
+                    try:
+                        logger.info(f"Deleting old volume {old_volume_id} for device {device}")
+                        self.aws_client.delete_volume(old_volume_id)
+                        logger.info(f"Successfully deleted old volume {old_volume_id}")
+                    except Exception as e:
+                        logger.error(f"Error deleting old volume {old_volume_id}: {str(e)}")
+                        # Continue with other volumes even if one fails
+
             # Display final volume changes after attachment
             logger.info("Displaying final volume configuration...")
             display_volume_changes(current_volumes, ami_volumes, volume_devices, self.aws_client)
 
-            # Generate restore report with updated volume information
-            logger.info("Generating restore report...")
-            self.generate_restore_report(
-                instance_id=instance_id,
-                restore_type='volume',
-                ami_id=ami_id,
-                current_volumes=current_volumes,
-                ami_volumes=ami_volumes,
-                backup_file=backup_file
-            )
+            # Log the volume changes for debugging
+            logger.info(f"Volume changes to be included in report: {json.dumps(volume_changes, indent=2)}")
 
             total_duration = datetime.now() - start_time
             logger.info(f"Volume restore completed successfully in {total_duration.total_seconds():.2f} seconds")
-            return instance_id
+            return volume_changes
 
         except Exception as e:
             total_duration = datetime.now() - start_time
@@ -479,21 +500,20 @@ class RestoreManager:
             logger.error(f"Error restoring instance state: {str(e)}")
             # Don't raise the exception as this is cleanup code
 
-    def generate_restore_report(self, instance_id: str, restore_type: str, ami_id: str, new_instance_id: Optional[str] = None, current_volumes: Optional[List[Dict]] = None, ami_volumes: Optional[List[Dict]] = None, backup_file: Optional[str] = None) -> str:
-        """Generate a restore report with details about the restoration process."""
+    def generate_restore_report(self, instance_id: str, restore_type: str, ami_id: str, new_instance_id: Optional[str] = None, volume_changes: Optional[Dict] = None) -> str:
+        """Generate a concise restore report focusing on changes made during the restore process."""
         try:
             # Create backup directory if it doesn't exist
             os.makedirs(self.backup_dir, exist_ok=True)
             
-            # Load previous metadata if backup file exists
-            previous_metadata = None
-            if backup_file and os.path.exists(backup_file):
-                with open(backup_file, 'r') as f:
-                    previous_metadata = json.load(f)
-            
-            # Get instance details for the appropriate instance
+            # Get instance details
             target_instance_id = new_instance_id if restore_type == 'full' else instance_id
             instance = self.aws_client.get_instance_by_id(target_instance_id)
+            
+            # For full restore, get the original instance details too
+            original_instance = None
+            if restore_type == 'full' and new_instance_id:
+                original_instance = self.aws_client.get_instance_by_id(instance_id)
             
             # Get instance name from tags
             instance_name = None
@@ -502,107 +522,87 @@ class RestoreManager:
                     instance_name = tag['Value']
                     break
             
-            # Get current volumes if not provided
-            if not current_volumes:
-                current_volumes = self.aws_client.get_instance_volumes(target_instance_id, is_ami=False)
-            
-            # Prepare report data
+            # Prepare concise report data
             report_data = {
                 'timestamp': datetime.now().isoformat(),
                 'restore_type': restore_type,
-                'source_instance': {
-                    'id': instance_id,
+                'instance': {
+                    'id': target_instance_id,
                     'name': instance_name,
-                    'state': instance['State']['Name'],
                     'type': instance['InstanceType'],
                     'az': instance['Placement']['AvailabilityZone']
                 },
-                'source_ami': {
-                    'id': ami_id,
-                    'volumes': ami_volumes if ami_volumes is not None else []
-                },
-                'previous_state': {
-                    'instance': {
-                        'id': instance_id,
-                        'name': instance_name,
-                        'state': previous_metadata['InstanceDetails']['State']['Name'] if previous_metadata else None,
-                        'type': previous_metadata['InstanceDetails']['InstanceType'] if previous_metadata else None,
-                        'az': previous_metadata['InstanceDetails']['Placement']['AvailabilityZone'] if previous_metadata else None
-                    },
-                    'volumes': []
-                },
-                'restore_details': {
-                    'snapshots': [],
-                    'new_volumes': [],
-                    'volume_changes': []
-                },
-                'current_state': {
-                    'instance': {
-                        'id': target_instance_id,
-                        'name': instance_name,
-                        'state': instance['State']['Name'],
-                        'type': instance['InstanceType'],
-                        'az': instance['Placement']['AvailabilityZone']
-                    },
-                    'volumes': []
-                }
+                'source_ami': ami_id,
+                'changes': []
             }
             
-            # Add previous volume information from metadata
-            if previous_metadata and 'InstanceDetails' in previous_metadata:
-                prev_instance = previous_metadata['InstanceDetails']
-                for block_device in prev_instance.get('BlockDeviceMappings', []):
-                    if 'Ebs' in block_device:
-                        report_data['previous_state']['volumes'].append({
-                            'device': block_device['DeviceName'],
-                            'volume_id': block_device['Ebs']['VolumeId'],
-                            'type': block_device['Ebs'].get('VolumeType', 'gp3'),
-                            'size': block_device['Ebs'].get('VolumeSize', 'N/A'),
-                            'delete_on_termination': block_device['Ebs'].get('DeleteOnTermination', True)
-                        })
+            # Add volume changes if available for volume restore
+            if volume_changes and restore_type == 'volume':
+                for device, change in volume_changes.items():
+                    report_data['changes'].append({
+                        'device': device,
+                        'previous_volume': {
+                            'id': change['old_volume_id'],
+                            'size': change['old_size'],
+                            'type': change['old_type'],
+                            'delete_on_termination': change['old_delete_on_termination']
+                        },
+                        'new_volume': {
+                            'id': change['new_volume_id'],
+                            'size': change['new_size'],
+                            'type': change['new_type'],
+                            'delete_on_termination': change['new_delete_on_termination']
+                        }
+                    })
             
-            # Track volume changes and new volumes
-            if current_volumes and ami_volumes:
-                # Map volumes by device name
-                prev_volumes_map = {vol['device']: vol for vol in report_data['previous_state']['volumes']}
-                curr_volumes_map = {vol['Device']: vol for vol in current_volumes}
-                ami_volumes_map = {vol['Device']: vol for vol in ami_volumes}
+            # Add instance changes for full restore
+            if restore_type == 'full' and new_instance_id and original_instance:
+                # Get volumes for both instances
+                original_volumes = self.aws_client.get_instance_volumes(instance_id, is_ami=False)
+                new_volumes = self.aws_client.get_instance_volumes(new_instance_id, is_ami=False)
                 
-                # Track new volumes created from AMI snapshots and update current state
-                for device, ami_vol in ami_volumes_map.items():
-                    if device in curr_volumes_map:
-                        curr_vol = curr_volumes_map[device]
-                        # Add to new volumes list
-                        report_data['restore_details']['new_volumes'].append({
-                            'device': device,
-                            'volume_id': curr_vol['VolumeId'],
-                            'snapshot_id': ami_vol['VolumeId'],
-                            'type': curr_vol.get('VolumeType', 'gp3'),
-                            'size': curr_vol.get('Size', 'N/A')
-                        })
-                        # Add to current state volumes
-                        report_data['current_state']['volumes'].append({
-                            'Device': device,
-                            'VolumeId': curr_vol['VolumeId'],
-                            'Size': curr_vol.get('Size', 'N/A'),
-                            'VolumeType': curr_vol.get('VolumeType', 'gp3'),
-                            'DeleteOnTermination': curr_vol.get('DeleteOnTermination', True)
-                        })
+                # Track instance-level changes
+                instance_change = {
+                    'type': 'instance',
+                    'previous_instance': {
+                        'id': instance_id,
+                        'type': original_instance['InstanceType'],
+                        'state': 'terminated'  # Set to terminated for full restore
+                    },
+                    'new_instance': {
+                        'id': new_instance_id,
+                        'type': instance['InstanceType'],
+                        'state': instance['State']['Name']
+                    }
+                }
+                report_data['changes'].append(instance_change)
                 
                 # Track volume changes
-                for device in set(list(prev_volumes_map.keys()) + list(curr_volumes_map.keys())):
-                    prev_vol = prev_volumes_map.get(device, {})
-                    curr_vol = curr_volumes_map.get(device, {})
+                for new_vol in new_volumes:
+                    device = new_vol['Device']
+                    # Find matching original volume
+                    old_vol = next((v for v in original_volumes if v['Device'] == device), None)
                     
-                    if device in curr_volumes_map:
-                        change_info = {
-                            'device': device,
-                            'previous_volume_id': prev_vol.get('volume_id', 'N/A'),
-                            'new_volume_id': curr_vol['VolumeId'],
-                            'type': curr_vol.get('VolumeType', 'gp3'),
-                            'size': curr_vol.get('Size', 'N/A')
+                    volume_change = {
+                        'type': 'volume',
+                        'device': device,
+                        'new_volume': {
+                            'id': new_vol['VolumeId'],
+                            'size': new_vol['Size'],
+                            'type': new_vol['VolumeType'],
+                            'delete_on_termination': new_vol['DeleteOnTermination']
                         }
-                        report_data['restore_details']['volume_changes'].append(change_info)
+                    }
+                    
+                    if old_vol:
+                        volume_change['previous_volume'] = {
+                            'id': old_vol['VolumeId'],
+                            'size': old_vol['Size'],
+                            'type': old_vol['VolumeType'],
+                            'delete_on_termination': old_vol['DeleteOnTermination']
+                        }
+                    
+                    report_data['changes'].append(volume_change)
             
             # Generate report filename
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -656,36 +656,32 @@ class RestoreManager:
                 logger.info(f"Found {len(new_instance_volumes)} volumes on new instance {new_instance_id}")
                 
                 # Generate restore report with new instance ID
-                self.generate_restore_report(
+                report_path = self.generate_restore_report(
                     instance_id=instance_id,
                     restore_type='full',
                     ami_id=ami_id,
-                    new_instance_id=new_instance_id,
-                    current_volumes=new_instance_volumes,
-                    ami_volumes=ami_volumes,  # Pass the AMI volumes we retrieved earlier
-                    backup_file=backup_file
+                    new_instance_id=new_instance_id
                 )
+                logger.info(f"Full restore report generated: {report_path}")
                 return new_instance_id
             elif restore_type == 'volume':
                 if not volume_devices:
                     raise ValueError("Volume devices must be specified for volume restore")
                 
-                # Perform volume restore
-                self.volume_restore(instance_id, ami_id, volume_devices)
+                # Perform volume restore and get volume changes
+                volume_changes = self.volume_restore(instance_id, ami_id, volume_devices)
                 
-                # Get updated volumes after restore
-                updated_volumes = self.aws_client.get_instance_volumes(instance_id, is_ami=False)
-                logger.info(f"Found {len(updated_volumes)} volumes after restore")
+                # Log the volume changes for debugging
+                logger.info(f"Volume changes to be included in report: {json.dumps(volume_changes, indent=2)}")
                 
-                # Generate restore report
-                self.generate_restore_report(
+                # Generate restore report with volume changes
+                report_path = self.generate_restore_report(
                     instance_id=instance_id,
                     restore_type='volume',
                     ami_id=ami_id,
-                    current_volumes=updated_volumes,
-                    ami_volumes=ami_volumes,  # Pass the AMI volumes we retrieved earlier
-                    backup_file=backup_file
+                    volume_changes=volume_changes
                 )
+                logger.info(f"Volume restore report generated: {report_path}")
                 return instance_id
             else:
                 raise ValueError(f"Invalid restore type: {restore_type}")

@@ -10,7 +10,9 @@ from rich.table import Table
 from .aws_client import AWSClient
 from .restore_manager import RestoreManager
 from .display import display_volume_changes, display_instance_changes
+from .ssm_manager import SSMManager
 from datetime import datetime
+from pathlib import Path
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -97,7 +99,7 @@ def display_progress(description: str, duration: float):
     console.print(f"[green]✓[/green] {description} ({duration:.2f} seconds)")
 
 @click.group()
-@click.version_option(version="1.0.7", prog_name="ec2-restore", message="%(prog)s, version %(version)s")
+@click.version_option(version="1.1.0", prog_name="ec2-restore", message="%(prog)s, version %(version)s")
 def cli():
     """EC2 Instance Restore Tool"""
     pass
@@ -312,10 +314,12 @@ def restore(instance_id: Optional[str], instance_name: Optional[str],
                             console=console
                         ) as progress:
                             progress.add_task(description="Performing volume restore...")
-                            restore_manager.volume_restore(
+                            # Call restore instead of volume_restore to properly generate the report
+                            restore_manager.restore(
                                 instance_id,
                                 selected_ami['ImageId'],
-                                selected_volumes
+                                restore_type='volume',
+                                volume_devices=selected_volumes
                             )
                         console.print("[green]Volume restore completed successfully[/green]")
                         
@@ -341,16 +345,28 @@ def restore(instance_id: Optional[str], instance_name: Optional[str],
                     console=console
                 ) as progress:
                     progress.add_task(description="Generating restoration report...")
-                    report_file = restore_manager.generate_restore_report(
-                        instance_id=instance_id,
-                        restore_type=restore_type,
-                        ami_id=selected_ami['ImageId'],
-                        new_instance_id=new_instance_id if restore_type == "full" else None,
-                        current_volumes=current_volumes if restore_type == 'volume' else None,
-                        ami_volumes=ami_volumes,
-                        backup_file=backup_file
-                    )
-                console.print(f"[green]Restoration report generated: {report_file}[/green]")
+                    if restore_type == "full":
+                        report_file = restore_manager.generate_restore_report(
+                            instance_id=instance_id,
+                            restore_type=restore_type,
+                            ami_id=selected_ami['ImageId'],
+                            new_instance_id=new_instance_id
+                        )
+                    else:
+                        # For volume restore, the report was already generated in the restore_manager.restore method
+                        # Just get the latest report file for display
+                        report_files = list(Path(restore_manager.backup_dir).glob(f"restore_report_{instance_id}_*.json"))
+                        if report_files:
+                            report_file = str(sorted(report_files, key=lambda x: x.stat().st_mtime, reverse=True)[0])
+                            logger.info(f"Found most recent report file: {report_file}")
+                        else:
+                            report_file = None
+                            logger.warning(f"No report file found for instance {instance_id}")
+                
+                if report_file:
+                    console.print(f"[green]Restoration report generated: {report_file}[/green]")
+                else:
+                    console.print(f"[yellow]Warning: No restoration report file found[/yellow]")
 
                 instance_duration = datetime.now() - instance_start
                 display_progress(f"Instance {instance_id} processed successfully", instance_duration.total_seconds())
@@ -373,6 +389,77 @@ def restore(instance_id: Optional[str], instance_name: Optional[str],
         logger.error(f"Error during restoration after {total_duration.total_seconds():.2f} seconds: {str(e)}")
         console.print(f"[red]Error during restoration: {str(e)}[/red]")
         raise click.Abort()
+
+@cli.command()
+@click.option('--instance-id', help='EC2 instance ID to run SSM commands on', required=True)
+@click.option('--config', default='config.yaml', help='Path to configuration file')
+@click.option('--command', help='Single SSM command to run (if not provided, enters interactive mode)')
+@click.option('--timeout', default=300, help='Command timeout in seconds (only used with --command)')
+@click.option('--document', help='SSM document name (overrides config)')
+def ssm(instance_id: str, config: str, command: Optional[str] = None, 
+        timeout: int = 300, document: Optional[str] = None):
+    """Run SSM commands on an EC2 instance.
+    
+    This command allows you to run Systems Manager commands on an instance without 
+    performing a restore operation. You can either run a single command specified 
+    with --command or enter an interactive mode where you can run multiple commands.
+    """
+    try:
+        # Load configuration
+        config_data = load_config(config)
+        setup_logging(config_data)
+        logger.info(f"Starting SSM command session for instance {instance_id}")
+
+        # Initialize AWS client
+        aws_client = AWSClient(
+            profile_name=config_data['aws']['profile'],
+            region=config_data['aws']['region']
+        )
+        
+        # Verify instance exists
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            console=console
+        ) as progress:
+            progress.add_task(description=f"Verifying instance {instance_id}...")
+            try:
+                instance = aws_client.get_instance_by_id(instance_id)
+                if 'State' in instance and instance['State']['Name'] != 'running':
+                    console.print(f"[yellow]Warning: Instance {instance_id} is not running (state: {instance['State']['Name']}). SSM commands might fail.[/yellow]")
+            except Exception as e:
+                console.print(f"[red]Error: Failed to verify instance {instance_id}: {str(e)}[/red]")
+                return
+        
+        # Override document name if provided
+        if document:
+            config_data['systems_manager'] = config_data.get('systems_manager', {})
+            config_data['systems_manager']['document_name'] = document
+        
+        # Always enable SSM for this command
+        if 'systems_manager' not in config_data:
+            config_data['systems_manager'] = {}
+        config_data['systems_manager']['enabled'] = True
+            
+        # Initialize SSM manager
+        ssm_manager = SSMManager(aws_client, config_data)
+        
+        # Run either a single command or enter interactive mode
+        if command:
+            # Single command mode
+            logger.info(f"Running single command: {command}")
+            console.print(f"[cyan]Running command on instance {instance_id}[/cyan]")
+            ssm_manager._run_single_command(instance_id, command, timeout, True)
+        else:
+            # Interactive mode
+            logger.info("Starting interactive SSM command session")
+            ssm_manager.run_interactive_session(instance_id)
+            
+        logger.info("SSM command session completed")
+        
+    except Exception as e:
+        logger.error(f"Error running SSM commands: {str(e)}")
+        console.print(f"[red]Error: {str(e)}[/red]")
 
 if __name__ == '__main__':
     cli()

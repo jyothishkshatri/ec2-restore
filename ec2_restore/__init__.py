@@ -9,7 +9,7 @@ from ec2_restore.modules.display import display_volume_changes, display_instance
 from ec2_restore.modules.restore_manager import RestoreManager
 from ec2_restore.modules.aws_client import AWSClient
 
-__version__ = "1.0.9"
+__version__ = "1.1.0"
 
 __all__ = [
     'cli',

@@ -10,6 +10,7 @@ A powerful command-line tool for restoring EC2 instances from AMIs with advanced
 - **Comprehensive Reporting**: Generate detailed restoration reports
 - **Network Configuration Preservation**: Maintain private IP addresses and network settings
 - **Systems Manager Integration**: Execute post-restore commands using AWS Systems Manager
+- **Interactive SSM Sessions**: Run commands on EC2 instances without performing a restore
 - **Instance Metadata Backup**: Automatic backup of instance metadata before restoration
 - **Volume Change Visualization**: Clear display of volume changes before and after restoration
 - **Instance Change Tracking**: Detailed comparison of instance configurations
@@ -166,6 +167,59 @@ Volume Changes:
 - `--restore-type`: Type of restore (full or volume)
 - `--config`: Path to configuration file (default: config.yaml)
 - `--version` or `-v`: Display version information
+
+### Running SSM Commands
+
+You can run Systems Manager (SSM) commands on EC2 instances without performing a restore operation. This is useful for executing maintenance tasks, checking instance status, or running scripts on your instances.
+
+```bash
+# Run interactive SSM session
+ec2-restore ssm --instance-id i-1234567890abcdef0
+
+# Run a single SSM command
+ec2-restore ssm --instance-id i-1234567890abcdef0 --command "df -kh"
+
+# Specify a custom timeout for the command
+ec2-restore ssm --instance-id i-1234567890abcdef0 --command "yum update -y" --timeout 600
+
+# Use a custom SSM document
+ec2-restore ssm --instance-id i-1234567890abcdef0 --document "AWS-RunPowerShellScript"
+```
+
+Example output for interactive SSM session:
+```
+✓ Verifying instance i-1234567890abcdef0...
+
+Starting interactive SSM session for instance: i-1234567890abcdef0
+You have the following predefined commands available:
+
+Systems Manager Commands
+┌─────────────────┬───────────────────┬─────────┬─────┐
+│ Name            │ Command           │ Timeout │ Wait │
+├─────────────────┼───────────────────┼─────────┼─────┤
+│ check os version│ cat /etc/os-release│ 300s    │ Yes │
+│ check disk size │ df -kh            │ 300s    │ Yes │
+└─────────────────┴───────────────────┴─────────┴─────┘
+
+Do you want to run one of these predefined commands? [y/n]: y
+Select a command to run [check os version/check disk size/all/quit]: check os version
+
+Executing command on i-1234567890abcdef0
+Command: cat /etc/os-release
+
+Command Output:
+NAME="Amazon Linux"
+VERSION="2"
+ID="amzn"
+ID_LIKE="centos rhel fedora"
+VERSION_ID="2"
+PRETTY_NAME="Amazon Linux 2"
+ANSI_COLOR="0;33"
+CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2"
+HOME_URL="https://amazonlinux.com/"
+
+Command Status: Success
+```
 
 ## Development
 

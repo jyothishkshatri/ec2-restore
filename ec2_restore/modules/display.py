@@ -127,8 +127,13 @@ def display_instance_changes(instance: Dict, ami: Dict, new_instance_id: str = N
         ("Instance Type", instance['InstanceType'], instance['InstanceType'], "Preserved"),
         ("Availability Zone", instance['Placement']['AvailabilityZone'], instance['Placement']['AvailabilityZone'], "Preserved"),
         ("AMI ID", "N/A", ami['ImageId'], "Selected"),
-        ("State", instance['State']['Name'], "Pending" if not new_instance_id else "Running", "Pending" if not new_instance_id else "Available")
     ]
+
+    # Show old instance state as "terminated" when a new instance has been created (full restore)
+    if new_instance_id:
+        rows.append(("State", "terminated", "Running", "Available"))
+    else:
+        rows.append(("State", instance['State']['Name'], "Pending", "Pending"))
     
     # Add network information
     if network_interface:

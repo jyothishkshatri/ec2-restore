@@ -6,6 +6,8 @@ The EC2 Instance Restore Tool provides functionality for restoring EC2 instances
 - Full Instance Restore: Creates a new instance while preserving network interfaces and configuration
 - Volume-Level Restore: Restores specific volumes from an AMI to an existing instance
 
+Additionally, the tool provides standalone Systems Manager (SSM) command execution functionality for running commands on EC2 instances without performing a restore operation.
+
 ## Installation
 
 1. Install the package:
@@ -204,6 +206,66 @@ Detailed logs are written to the configured log file (default: ec2_restore.log):
    Solution: Tool preserves ENI during full restore
    ```
 
+## Systems Manager Command Execution
+
+The tool provides a standalone command to run SSM commands on EC2 instances without performing a restore:
+
+### 1. Interactive SSM Session
+
+```bash
+ec2-restore ssm --instance-id i-1234567890abcdef0
+```
+
+This starts an interactive session where you can:
+- Select from predefined commands in your config.yaml
+- Enter custom commands to run on the instance
+- See command output in real-time
+
+### 2. Single Command Execution
+
+```bash
+ec2-restore ssm --instance-id i-1234567890abcdef0 --command "df -kh"
+```
+
+This runs a single command on the instance and displays the output.
+
+### 3. Custom Timeout
+
+```bash
+ec2-restore ssm --instance-id i-1234567890abcdef0 --command "yum update -y" --timeout 600
+```
+
+Specify a custom timeout (in seconds) for long-running commands.
+
+### 4. Custom SSM Document
+
+```bash
+ec2-restore ssm --instance-id i-1234567890abcdef0 --document "AWS-RunPowerShellScript"
+```
+
+Use a different SSM document instead of the default AWS-RunShellScript.
+
+### SSM Command Configuration
+
+In your config.yaml, you can define predefined commands that can be run both during restore operations and in standalone mode:
+
+```yaml
+systems_manager:
+  enabled: true
+  commands:
+    - name: "check os version"
+      command: "cat /etc/os-release"
+      timeout: 300
+      wait_for_completion: true
+    - name: "check disk space"
+      command: "df -kh"
+      timeout: 300
+      wait_for_completion: true
+  document_name: "AWS-RunShellScript"
+  output_s3_bucket: ""
+  output_s3_prefix: ""
+```
+
 ## Best Practices
 
 1. Always review the volume changes before confirming
@@ -211,6 +273,7 @@ Detailed logs are written to the configured log file (default: ec2_restore.log):
 3. Monitor the logs for detailed operation status
 4. Use instance name tags for easier identification
 5. Maintain regular AMI backups of critical instances
+6. Use the SSM functionality for routine maintenance and health checks
 
 ## Environment Variables
 
